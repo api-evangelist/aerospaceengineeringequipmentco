@@ -1,0 +1,21 @@
+generated: '2026-09-10'
+method: generated
+source: >-
+  Authored from the operationIds in openapi/ (each verified present in the spec before being named) plus
+  the runtime behaviour recorded in conventions/, errors/ and data-model/ during the live probes of
+  2026-09-10. AEE publishes no skills, no AGENTS.md and no agent documentation of its own.
+skills:
+- name: browse-aee-fsw-catalog
+  file: aerospaceengineeringequipmentco-browse-fsw-catalog.md
+  api: aerospaceengineeringequipmentco:aee-products-api
+  description: Retrieve and filter the AEE friction stir welding equipment catalogue — machines, production lines and tooling.
+  operations: [listProductCategories, listProducts, getProduct, getMediaItem]
+- name: track-aee-fsw-content
+  file: aerospaceengineeringequipmentco-track-fsw-content.md
+  api: aerospaceengineeringequipmentco:aee-content-api
+  description: Monitor AEE news and FSW technical articles, read the static company and process pages, and search the whole site.
+  operations: [listCategories, listPosts, getPost, listPages, search]
+note: >-
+  Two skills, both read-only, matching the surface. No write, purchase or enquiry skill is offered: the
+  contact form endpoint (fluentform/v1/form-submit) is a plugin route AEE does not document, and submitting
+  a sales enquiry on a user's behalf is not a flow this profile should teach an agent to automate.

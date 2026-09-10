@@ -1,0 +1,30 @@
+generated: '2026-09-10'
+method: searched
+source: >-
+  Registry searches on 2026-09-10 across npm (registry.npmjs.org), PyPI, RubyGems, crates.io, NuGet, Maven
+  Central, pkg.go.dev and Packagist for "a-fsw", "aee-fsw", "aeespace" and "aerospace engineering
+  equipment", plus a GitHub organisation lookup and a full walk of the 14 published AEE pages.
+package_count: 0
+official_sdk_count: 0
+packages: []
+note: >-
+  AEE ships no client libraries. No first-party package exists under any registry probed, no GitHub
+  organisation exists, and the site links to no SDK, sample code or source repository. This follows from
+  the shape of the company: it sells welding machines, not software, and the read surface profiled here is
+  an incidental property of its WordPress marketing site rather than a product it supports. No SDKs
+  pointer is emitted in apis.yml, because there is no SDK to point at.
+registries_probed:
+- {registry: npm, query: 'a-fsw / aee-fsw / aeespace', result: no first-party package, version: null}
+- {registry: pypi, query: 'a-fsw / aee-fsw / aeespace', result: no first-party package, version: null}
+- {registry: rubygems, query: 'a-fsw / aee-fsw', result: no first-party package, version: null}
+- {registry: crates.io, query: 'a-fsw / aee-fsw', result: no first-party package, version: null}
+- {registry: nuget, query: 'a-fsw / aee-fsw', result: no first-party package, version: null}
+- {registry: maven-central, query: 'a-fsw / aeespace', result: no first-party package, version: null}
+- {registry: pkg.go.dev, query: 'a-fsw / aee-fsw', result: no first-party package, version: null}
+- {registry: packagist, query: 'a-fsw / aee-fsw', result: no first-party package, version: null}
+source_control:
+- {host: github.com, org: a-fsw, status: 404}
+- {host: github.com, org: aee-fsw, status: 404}
+third_party_note: >-
+  Any WordPress REST client library (for example the community @wordpress/api-fetch package) will call this
+  surface, because it is stock wp/v2. Those are not AEE packages and are deliberately not listed here.

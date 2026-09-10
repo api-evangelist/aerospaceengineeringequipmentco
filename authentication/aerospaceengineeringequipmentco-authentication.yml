@@ -1,0 +1,43 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  https://a-fsw.com/wp-json/ (route index, authentication block) plus live anonymous and context=edit
+  probes of the wp/v2 routes on 2026-09-10
+summary: >-
+  The public AEE surface requires no authentication and offers no credential of any kind: every route
+  documented in openapi/ answers HTTP 200 to an anonymous GET in the default context=view. There is no
+  developer program, no key issuance, no OAuth and no signup. The only authentication mechanism the server
+  advertises is WordPress application passwords, which gate the write methods and the privileged read
+  contexts; those are administrator surfaces, not a published API product.
+public_surface:
+  authentication_required: false
+  verified: '2026-09-10'
+  evidence:
+  - {url: 'https://a-fsw.com/wp-json/wp/v2/product?per_page=1', status: 200, note: 'Anonymous GET returns published products.'}
+  - {url: 'https://a-fsw.com/wp-json/wp/v2/posts?per_page=1', status: 200, note: 'Anonymous GET returns published posts.'}
+security_schemes: []
+schemes_advertised_but_not_public:
+- id: application-passwords
+  type: http
+  scheme: basic
+  standard: WordPress application passwords (HTTP Basic with a generated per-application password)
+  authorization_endpoint: https://a-fsw.com/wp-admin/authorize-application.php
+  source: 'https://a-fsw.com/wp-json/ -> authentication.application-passwords.endpoints.authorization'
+  applies_to: >-
+    Write methods (POST/PUT/PATCH/DELETE) on wp/v2 routes, the privileged read context=edit, and the
+    administrative namespaces (wp-abilities/v1, fluentform/v1, spc/v1, google-site-kit/v1, wp-site-health/v1).
+  public: false
+  note: >-
+    This is WordPress core administration, not an AEE API product. It is recorded because the server
+    advertises it in its own route index, and because it is the reason the write half of every documented
+    route is deliberately absent from openapi/.
+gated_probes:
+- {url: 'https://a-fsw.com/wp-json/wp/v2/product?context=edit', status: 401, code: rest_forbidden_context, note: 'Privileged read context refused anonymously.'}
+- {url: 'https://a-fsw.com/wp-json/wp/v2/settings', status: 401, code: rest_forbidden}
+- {url: 'https://a-fsw.com/wp-json/wp-abilities/v1/abilities', status: 401, code: rest_forbidden, note: 'The WordPress Abilities API — the agent-facing tool registry — is installed but auth-gated. No anonymous tool discovery is possible.'}
+- {url: 'https://a-fsw.com/wp-json/fluentform/v1/forms/ping', status: 401, code: rest_forbidden}
+oauth:
+  present: false
+  note: 'No oauth2 or openIdConnect scheme is declared or served; /.well-known/openid-configuration and /.well-known/oauth-authorization-server both 404. No scopes/ artifact is emitted.'
+docs: null
+docs_note: 'AEE publishes no authentication documentation because it publishes no developer program.'

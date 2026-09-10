@@ -1,0 +1,24 @@
+generated: '2026-09-10'
+method: searched
+source: 'https://a-fsw.com/ site walk on 2026-09-10 — every published page enumerated via https://a-fsw.com/wp-json/wp/v2/pages'
+plan_count: 0
+published: false
+note: >-
+  AEE publishes no pricing of any kind — neither for its equipment nor for the read surface profiled here.
+  It sells capital industrial machinery (friction stir welding machines, production lines and tooling)
+  through a quotation motion: the site's commercial call to action is an enquiry form, and no page carries
+  a price, a tier, a quota or a currency. There is no API product and therefore no API pricing. This is a
+  genuine zero, not an unchecked field.
+plans: []
+commercial_motion:
+  model: quote-on-enquiry
+  contact: {url: 'https://a-fsw.com/contact-us/', status: 200}
+  evidence:
+  - {url: 'https://a-fsw.com/', status: 200, note: 'Homepage CTA is a contact/enquiry form; no pricing element.'}
+  - {url: 'https://a-fsw.com/service/', status: 200, note: 'Service page describes process services and support; no rates published.'}
+  - {url: 'https://a-fsw.com/faq/', status: 200, note: 'FAQ covers FSW process questions; no pricing.'}
+  pages_checked: 14
+  pages_with_pricing: 0
+api_access_cost:
+  amount: 0
+  note: 'The wp-json read surface is anonymous and free. That is a property of the WordPress default, not a published AEE offer, and AEE makes no availability commitment about it.'

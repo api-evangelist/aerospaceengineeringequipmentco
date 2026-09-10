@@ -1,0 +1,65 @@
+generated: '2026-09-10'
+method: probed
+source: live probes of /.well-known/* on every host this record knows
+hit_count: 0
+note: >-
+  Every named /.well-known/ path was probed on both AEE hosts and none returned a document. a-fsw.com
+  answers a real nginx 404 (138 bytes) for every path, including the negative control, so these are honest
+  absences rather than a detection failure. www.aeespace.com sits behind a WAF that answers 403 to every
+  non-browser request for any path other than the site root — including the negative control — so nothing
+  can be concluded from its status codes either way; no document was retrieved from it. NO WellKnown and
+  NO SecurityTxt pointer is emitted in apis.yml, because a pointer would assert that AEE serves a discovery
+  surface it does not serve. The apex aeespace.com (without www) resets the connection.
+hosts:
+- host: https://a-fsw.com
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/aee-negative-control-7f3ab91c.json
+    status: 404
+    bytes: 138
+    note: Real 404 from nginx; this host does not echo or catch-all on /.well-known/.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/api-catalog, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/apis.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/aauth-resource.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/ucp.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/acp.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, content_type: text/html, file: null}
+  - {path: /.well-known/agent.json, status: 404, content_type: text/html, file: null}
+  - {path: /apis.json, status: 301, content_type: text/html, file: null, note: 'Redirects to the site root; WordPress soft-404, not an index.'}
+  - {path: /apis.yml, status: 301, content_type: text/html, file: null, note: 'Redirects to the site root; WordPress soft-404, not an index.'}
+- host: https://www.aeespace.com
+  path_echo_control: inconclusive
+  soft_404_control:
+    path: /.well-known/aee-negative-control-7f3ab91c.json
+    status: 403
+    bytes: 609
+    note: >-
+      The control is also 403, so every 403 below is the WAF refusing our client, not evidence about
+      whether the document exists. No document was retrieved.
+  documents:
+  - {path: /.well-known/security.txt, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/openid-configuration, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/api-catalog, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/apis.json, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/aauth-resource.json, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/agent-card.json, status: 403, content_type: text/html, file: null}
+  - {path: /.well-known/agent.json, status: 403, content_type: text/html, file: null}
+  - {path: /apis.json, status: 403, content_type: text/html, file: null}
+  - {path: /apis.yml, status: 403, content_type: text/html, file: null}
+related_probes:
+- {host: a-fsw.com, path: /robots.txt, status: 200, note: 'Disallows only /wp-admin/; points at wp-sitemap.xml. Nothing in this pass was blocked by robots.'}
+- {host: a-fsw.com, path: /wp-sitemap.xml, status: 200, note: 'WordPress core sitemap index; 6 child sitemaps (posts, pages, product, category, product-category, users).'}
+- {host: a-fsw.com, path: /llms.txt, status: 301, note: 'Soft-404 redirect to site root. No provider-published llms.txt; a generated one is in llms/.'}
+- {host: www.aeespace.com, path: /llms.txt, status: 404, note: 'Honest 404 — this one path is not WAF-blocked.'}
+- {host: www.aeespace.com, path: /robots.txt, status: 200, note: 'Disallows query-string paths; points at http://www.aeespace.com/sitemap.xml, which 301s to a CloudFront error.'}
+- {host: aeespace.com, path: /, status: null, note: 'TCP connection reset by peer; the apex without www is not reachable.'}
+- {host: aee-fsw.com, path: /, status: null, note: 'NXDOMAIN. Appeared in a directory listing (m.aee-fsw.com) but does not resolve.'}

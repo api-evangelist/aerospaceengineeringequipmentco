@@ -1,0 +1,114 @@
+generated: '2026-09-10'
+method: derived
+source: >-
+  openapi/aerospaceengineeringequipmentco-products-api-openapi.yml,
+  openapi/aerospaceengineeringequipmentco-content-api-openapi.yml,
+  openapi/aerospaceengineeringequipmentco-site-api-openapi.yml — all three derived from the OPTIONS schema
+  documents a-fsw.com publishes for each route. Relationship cardinalities were confirmed against live
+  records on 2026-09-10.
+summary: >-
+  Six entities across one WordPress content core. The commercially interesting half is Product, the custom
+  post type carrying AEE's friction stir welding catalogue, grouped by the ProductCategory taxonomy. The
+  rest is the standard WordPress content graph: Post and Page as editorial content, Category as the
+  post taxonomy, MediaItem as the attachment library that every content entity references through
+  featured_media, and User as the single author account.
+identifiers:
+  scheme: 'Sequential positive integers assigned by WordPress, unique per site across all post types.'
+  note: >-
+    Ids are NOT namespaced by type. Product 411, Post 411 and Page 411 cannot all exist, because posts,
+    pages and products share one id sequence — but an id alone does not tell a consumer which collection to
+    fetch. Use the `type` field on the record, or the `subtype` field on a search hit, to resolve it.
+  slugs: 'Every entity also carries a URL-safe `slug` unique within its type, and a `link` giving the canonical public page.'
+entities:
+- name: Product
+  collection: /wp/v2/product
+  count_at_capture: 18
+  key: id
+  description: 'An AEE friction stir welding machine, automatic production line, or tool.'
+  notable_fields: [id, slug, title, content, excerpt, featured_media, product-category, status, date, modified, link, class_list, template, meta]
+- name: ProductCategory
+  collection: /wp/v2/product-category
+  count_at_capture: 6
+  key: id
+  description: 'A grouping term for AEE equipment. Terms at capture: FSW Machine (8), Pin Tools (5), FSW Tools (3), Automatic FSW Production Line (2), plus two empty legacy terms (fsw-101, fsw-102).'
+  notable_fields: [id, name, slug, description, count, parent, link, meta]
+  hierarchical: true
+- name: Post
+  collection: /wp/v2/posts
+  count_at_capture: 50
+  key: id
+  description: 'An AEE news announcement or friction stir welding technical article.'
+  notable_fields: [id, slug, title, content, excerpt, author, featured_media, categories, tags, status, date, modified, link]
+- name: Page
+  collection: /wp/v2/pages
+  count_at_capture: 14
+  key: id
+  description: 'A static AEE page — company profile, process explainer, industry page, service, FAQ, contact or privacy policy.'
+  notable_fields: [id, slug, title, content, excerpt, author, parent, menu_order, featured_media, status, date, modified, link]
+  hierarchical: true
+- name: Category
+  collection: /wp/v2/categories
+  count_at_capture: 2
+  key: id
+  description: 'A core taxonomy term separating Blog (46 posts) from News (4 posts).'
+  notable_fields: [id, name, slug, description, count, parent, link]
+  hierarchical: true
+- name: MediaItem
+  collection: /wp/v2/media
+  count_at_capture: 232
+  key: id
+  description: 'An attachment — product photography, equipment diagram or application image — with generated size variants.'
+  notable_fields: [id, slug, title, alt_text, caption, media_type, mime_type, source_url, media_details, post, date, modified, link]
+relationships:
+- from: Product
+  to: ProductCategory
+  type: has_many
+  via: 'product-category (array of term ids on the product record)'
+  inverse: 'ProductCategory.count; filter with /wp/v2/product?product-category={id}'
+  confirmed: 'Product 411 (FSSW Tool) carries product-category [13] = Pin Tools.'
+- from: Product
+  to: MediaItem
+  type: has_one
+  via: featured_media
+  note: 'Zero when no featured image is set. Resolve with /wp/v2/media/{id} or inline with _embed.'
+- from: Post
+  to: Category
+  type: has_many
+  via: 'categories (array of term ids)'
+  inverse: 'Category.count; filter with /wp/v2/posts?categories={id}'
+  confirmed: 'Category 14 (Blog) reports count 46; Category 1 (News) reports count 4; 50 posts total.'
+- from: Post
+  to: MediaItem
+  type: has_one
+  via: featured_media
+- from: Post
+  to: User
+  type: belongs_to
+  via: author
+  note: 'One author account exists (id 1, aeefswadmin), so every post resolves to it.'
+- from: Page
+  to: Page
+  type: belongs_to
+  via: parent
+  note: 'Self-referential hierarchy. 0 means top level.'
+- from: Page
+  to: MediaItem
+  type: has_one
+  via: featured_media
+- from: Category
+  to: Category
+  type: belongs_to
+  via: parent
+- from: ProductCategory
+  to: ProductCategory
+  type: belongs_to
+  via: parent
+- from: MediaItem
+  to: Product
+  type: belongs_to
+  via: post
+  note: 'The `post` field back-references whichever post, page or product the attachment was uploaded to. Polymorphic — it can point at any of the three types.'
+traversal:
+  hal_links: 'Every record carries _links with self, collection, about and wp:term relations; wp:featuredmedia and wp:attachment appear where media is attached.'
+  embedding: 'Append _embed to any collection or item request to inline wp:featuredmedia and wp:term into an _embedded object, collapsing the two most common joins into one call. Verified live on /wp/v2/product.'
+  note: 'There is no cross-entity search join; /wp/v2/search returns lightweight hits (id, title, url, type, subtype) that must be re-fetched from their own collection for full records.'

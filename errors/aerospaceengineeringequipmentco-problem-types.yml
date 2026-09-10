@@ -1,0 +1,58 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Derived from the 400/401/404 responses in openapi/ and confirmed against live error responses fetched
+  from https://a-fsw.com/wp-json/ on 2026-09-10.
+format: wordpress-rest
+rfc9457: false
+media_type: application/json
+envelope:
+  code: 'Machine-readable error slug.'
+  message: 'Human-readable message.'
+  data.status: 'HTTP status code, repeated inside the body.'
+  data.params: 'Present on rest_invalid_param: a map of parameter name to a plain-language reason.'
+  data.details: 'Present on rest_invalid_param: a per-parameter object carrying its own code/message.'
+problem_types:
+- code: rest_invalid_param
+  status: 400
+  title: Invalid parameter
+  detail: 'One or more query parameters failed validation. data.params names each offending parameter and data.details carries a nested code such as rest_out_of_bounds.'
+  remediation: 'Read data.details[<param>].code and correct that parameter. per_page must be between 1 and 100 inclusive; page must be >= 1.'
+  observed: true
+  evidence: {url: 'https://a-fsw.com/wp-json/wp/v2/product?per_page=999', status: 400}
+- code: rest_out_of_bounds
+  status: 400
+  title: Parameter out of bounds
+  detail: 'Nested inside rest_invalid_param.data.details when a numeric parameter falls outside its allowed range.'
+  remediation: 'Clamp per_page to 1-100.'
+  observed: true
+  evidence: {url: 'https://a-fsw.com/wp-json/wp/v2/product?per_page=999', status: 400}
+- code: rest_forbidden_context
+  status: 401
+  title: Context not permitted
+  detail: 'The caller asked for a privileged serialization context (context=edit) without credentials.'
+  remediation: 'Use the default context=view. The edit context is an administrator surface and is not part of the public API.'
+  observed: true
+  evidence: {url: 'https://a-fsw.com/wp-json/wp/v2/product?context=edit', status: 401}
+- code: rest_forbidden
+  status: 401
+  title: Not authorized
+  detail: 'The route requires WordPress application-password authentication. Returned by the administrative namespaces and by wp/v2/settings.'
+  remediation: 'Not remediable by a public consumer; these routes are not part of the published surface.'
+  observed: true
+  evidence:
+  - {url: 'https://a-fsw.com/wp-json/wp/v2/settings', status: 401}
+  - {url: 'https://a-fsw.com/wp-json/wp-abilities/v1/abilities', status: 401}
+  - {url: 'https://a-fsw.com/wp-json/fluentform/v1/forms/ping', status: 401}
+edge_intercepted_errors:
+- condition: 'Item-level miss on any wp/v2 single-resource route'
+  expected: '404 application/json with code rest_post_invalid_id or rest_term_invalid'
+  observed: '404 text/html — an nginx 404 page carrying a Cloudflare challenge-platform script'
+  impact: >-
+    A client that assumes every wp-json error is JSON will throw a parse error rather than surface a clean
+    404. This is the single most consequential runtime quirk on the AEE surface for an automated consumer.
+  evidence:
+  - {url: 'https://a-fsw.com/wp-json/wp/v2/product/999999', status: 404, content_type: text/html}
+  - {url: 'https://a-fsw.com/wp-json/wp/v2/pages/9999', status: 404, content_type: text/html}
+docs: null
+docs_note: 'AEE publishes no error reference. Every entry above was observed live rather than read from documentation.'

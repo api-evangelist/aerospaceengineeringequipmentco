@@ -1,0 +1,93 @@
+generated: '2026-09-10'
+method: derived
+source: >-
+  Derived from openapi/aerospaceengineeringequipmentco-products-api-openapi.yml,
+  openapi/aerospaceengineeringequipmentco-content-api-openapi.yml and
+  openapi/aerospaceengineeringequipmentco-site-api-openapi.yml. A search for an AEE-operated MCP server
+  found none.
+status: candidate
+summary: >-
+  AEE operates no MCP server. This is a CANDIDATE tool set derived from the read operations API Evangelist
+  documented on the WordPress REST surface at a-fsw.com — it describes what an MCP server over that surface
+  could expose, and nothing here is served by AEE today. No endpoint is asserted because none exists.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: derived
+  note: >-
+    mode is none because nobody ships a server — not remote, not stdio. The underlying REST surface itself
+    needs no credential, which is why auth is none rather than unknown.
+search_evidence:
+- {surface: 'AEE site (14 pages, enumerated via /wp-json/wp/v2/pages)', result: 'No MCP mention.'}
+- {surface: 'https://a-fsw.com/.well-known/agent-card.json', status: 404, result: 'No agent card pointing at an MCP endpoint.'}
+- {surface: 'https://a-fsw.com/wp-json/wp-abilities/v1/abilities', status: 401, result: 'The WordPress Abilities API is installed but auth-gated; no anonymous tool discovery is possible. This is the closest thing to an agent tool registry on the host and it is not public.'}
+- {surface: 'npm / PyPI registry search for a-fsw, aee-fsw, aeespace', result: 'No package, MCP or otherwise.'}
+- {surface: 'github.com/a-fsw, github.com/aee-fsw', status: 404, result: 'No organisation.'}
+candidate_tools:
+- name: list_products
+  description: List AEE friction stir welding products, optionally filtered by product category or search term.
+  rest: [listProducts]
+  input_schema_source: 'openapi listProducts parameters (20 parameters, from the server''s own OPTIONS document)'
+- name: get_product
+  description: Retrieve one AEE product by numeric id.
+  rest: [getProduct]
+  input_schema_source: openapi getProduct parameters
+- name: list_product_categories
+  description: List the 6 product-category terms grouping AEE equipment.
+  rest: [listProductCategories]
+  input_schema_source: openapi listProductCategories parameters
+- name: get_product_category
+  description: Retrieve one product-category term by numeric id.
+  rest: [getProductCategory]
+  input_schema_source: openapi getProductCategory parameters
+- name: list_posts
+  description: List AEE news announcements and friction stir welding technical articles.
+  rest: [listPosts]
+  input_schema_source: openapi listPosts parameters
+- name: get_post
+  description: Retrieve one AEE post by numeric id.
+  rest: [getPost]
+  input_schema_source: openapi getPost parameters
+- name: list_pages
+  description: List AEE static company, process, industry and policy pages.
+  rest: [listPages]
+  input_schema_source: openapi listPages parameters
+- name: get_page
+  description: Retrieve one AEE page by numeric id.
+  rest: [getPage]
+  input_schema_source: openapi getPage parameters
+- name: list_categories
+  description: List the core category taxonomy terms (News, Blog).
+  rest: [listCategories]
+  input_schema_source: openapi listCategories parameters
+- name: get_category
+  description: Retrieve one category term by numeric id.
+  rest: [getCategory]
+  input_schema_source: openapi getCategory parameters
+- name: search_site
+  description: Search across AEE posts, pages and products and return lightweight hits.
+  rest: [search]
+  input_schema_source: openapi search parameters
+- name: list_media
+  description: List AEE media library attachments — product photography, equipment diagrams and application imagery.
+  rest: [listMedia]
+  input_schema_source: openapi listMedia parameters
+- name: get_media_item
+  description: Retrieve one media attachment by numeric id.
+  rest: [getMediaItem]
+  input_schema_source: openapi getMediaItem parameters
+- name: list_content_types
+  description: List the registered content types, including the custom product type.
+  rest: [listContentTypes]
+  input_schema_source: openapi listContentTypes parameters
+- name: list_post_statuses
+  description: List the registered post statuses.
+  rest: [listPostStatuses]
+  input_schema_source: openapi listPostStatuses parameters
+tool_count: 15
+notes:
+- 'Every candidate tool is read-only, mirroring the public surface. No write tool is proposed, because every write method on these routes is refused anonymously with HTTP 401.'
+- 'A server built from this would need to handle the edge quirk recorded in errors/: an item-level miss returns nginx HTML, not the WordPress JSON error envelope.'

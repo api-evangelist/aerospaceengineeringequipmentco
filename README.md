@@ -64,5 +64,24 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Aerospaceengineeringequipmentco is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://equityzen.com/company/aerospaceengineeringequipmentco
+# Aerospace Engineering Equipment
+
+Aerospace Engineering Equipment (Suzhou) Co., Ltd. — trading as AEE — is a Chinese industrial equipment manufacturer founded in December 2011 that designs, builds and integrates friction stir welding (FSW) machines, automatic FSW production lines and FSW tooling. It is a wholly owned subsidiary of Shanghai Aerospace Equipment Manufacturing Factory (149 Factory) under the Eighth Academy of the China Aerospace Science and Technology Corporation (CASC), operating an R&D headquarters in Wuzhong District, Suzhou and a volume production base in Liyang across roughly 55,000 square metres. AEE supplies one-, two- and three-dimensional FSW equipment plus process services into aerospace and aviation, rail transit, marine and shipbuilding, new-energy automotive, nuclear, power electronics and marine engineering. AEE publishes no developer program, no API documentation and no machine-readable specification; the surfaces profiled here are the anonymously readable WordPress REST content APIs served from its English-language marketing site at a-fsw.com, documented by API Evangelist from the server's own route index and OPTIONS schema documents.
+
+## Profiled surface
+
+| API | Operations | Base URL |
+|---|---|---|
+| AEE Products API | 4 | `https://a-fsw.com/wp-json` |
+| AEE Content API | 6 | `https://a-fsw.com/wp-json` |
+| AEE Site Index API | 5 | `https://a-fsw.com/wp-json` |
+
+All 15 operations are anonymous reads. The OpenAPI documents in `openapi/` were derived from the route
+index and per-route `OPTIONS` schema documents that a-fsw.com publishes itself — AEE ships no OpenAPI.
+
+## Links
+
+- Website: https://a-fsw.com/
+- Chinese corporate site: https://www.aeespace.com/
+- Contact: https://a-fsw.com/contact-us/
+- Blog: https://a-fsw.com/category/blog/

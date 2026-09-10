@@ -1,0 +1,20 @@
+generated: '2026-09-10'
+method: probed
+source: 'Response headers observed on https://a-fsw.com/wp-json/wp/v2/* requests on 2026-09-10.'
+limit_count: 0
+published: false
+note: >-
+  AEE publishes no rate limits, and none were observable at runtime. No X-RateLimit-*, RateLimit-* or
+  Retry-After header appeared on any successful or error response across the probes in this pass, and no
+  429 was returned. This is an honest zero: the surface is stock WordPress behind Cloudflare, so whatever
+  throttling exists is the CDN's default bot management rather than a published API policy an agent could
+  plan around.
+limits: []
+response_headers:
+  rate_limit_headers_present: false
+  observed_on_success: [x-wp-total, x-wp-totalpages, link, cf-ray, cf-cache-status, access-control-expose-headers]
+  exhaustion_status: null
+  retry_after: null
+enforcement_signals:
+- {signal: 'Cloudflare bot management', evidence: 'server: cloudflare and a cf-ray on every response; the 404 body embeds the Cloudflare challenge-platform script.', note: 'Undocumented and not a published limit. A high-volume client should expect an interstitial rather than a 429.'}
+- {signal: 'per_page ceiling', value: 100, evidence: 'https://a-fsw.com/wp-json/wp/v2/product?per_page=999 -> 400 rest_out_of_bounds', note: 'A pagination bound, not a rate limit, but it is the only published request constraint on the surface.'}

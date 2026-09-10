@@ -1,0 +1,93 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Live probes of https://a-fsw.com/wp-json/ on 2026-09-10 (response headers, error bodies, pagination
+  behaviour) cross-checked against the OPTIONS schema documents the server publishes for each route.
+summary: >-
+  AEE runs stock WordPress core REST conventions behind Cloudflare. The public surface is read-only, so the
+  runtime semantics that matter to an agent are pagination, filtering and error shape; the mutation
+  semantics (idempotency, reversibility, dry-run) do not apply because no mutation is publicly reachable.
+auth_style:
+  public: none
+  note: 'Anonymous GET. See authentication/aerospaceengineeringequipmentco-authentication.yml.'
+versioning:
+  style: path-namespace
+  current: wp/v2
+  pattern: 'https://a-fsw.com/wp-json/{namespace}/{version}/{resource}'
+  namespaces_served: [wp/v2, oembed/1.0, wp-abilities/v1, wp-block-editor/v1, wp-site-health/v1, batch/v1]
+  note: >-
+    The version is WordPress core's, not AEE's. AEE publishes no versioning policy of its own and has never
+    announced an API version; wp/v2 moves when the site updates WordPress.
+pagination:
+  style: page-number
+  params:
+    page: {type: integer, default: 1, description: 'Current page of the collection.'}
+    per_page: {type: integer, default: 10, min: 1, max: 100, description: 'Maximum items per page. Values outside 1-100 return HTTP 400 rest_out_of_bounds.'}
+    offset: {type: integer, description: 'Offset the result set by a specific number of items.'}
+  response_headers:
+    X-WP-Total: 'Total matching items across all pages. Observed: 18 on /wp/v2/product.'
+    X-WP-TotalPages: 'Total pages at the current per_page. Observed: 9 at per_page=2.'
+    Link: 'RFC 8288 links with rel="next" / rel="prev". Observed on /wp/v2/product.'
+  cors_exposed: 'Access-Control-Expose-Headers lists X-WP-Total, X-WP-TotalPages and Link, so a browser client can read all three.'
+  verified: '2026-09-10'
+sparse_fields:
+  supported: true
+  param: _fields
+  description: 'Comma-separated allowlist of top-level response properties, e.g. _fields=id,slug,title,link. Verified live against /wp/v2/product.'
+embedding:
+  supported: true
+  param: _embed
+  description: 'Inlines linked resources (featured media, terms, author) into an _embedded object, following the _links map on every item.'
+  hal_links: 'Every resource carries a _links object of HAL-style relations, including the self, collection and about relations.'
+filtering:
+  common: [search, slug, include, exclude, order, orderby, after, before, modified_after, modified_before, status]
+  taxonomy: 'Product collections additionally accept product-category and product-category_exclude plus tax_relation; post collections accept categories/categories_exclude and tags/tags_exclude.'
+  note: 'The full parameter set per route is enumerated in the openapi/ files, derived from the server''s own OPTIONS documents.'
+error_envelope:
+  format: wordpress-rest
+  rfc9457: false
+  media_type: application/json
+  shape: '{ "code": "<slug>", "message": "<human text>", "data": { "status": <http status>, ... } }'
+  observed_example: '{"code":"rest_invalid_param","message":"Invalid parameter(s): per_page","data":{"status":400,"params":{...},"details":{...}}}'
+  caveat: >-
+    OBSERVED DEFECT: the envelope is not returned uniformly. Item-level misses
+    (/wp/v2/product/999999, /wp/v2/pages/9999) are intercepted by the edge and answered with an nginx HTML
+    404 page at content-type text/html, never reaching the WordPress JSON handler. A consumer must branch
+    on content-type rather than assume every error is JSON. See errors/.
+request_id_tracing:
+  provider_id: none
+  edge_id: 'Cloudflare returns a cf-ray header (e.g. a391a8bc49e3ebb4-YYZ) on every response. It identifies the edge request, not an AEE-side trace, and AEE publishes no way to look one up.'
+rate_limit_signaling:
+  headers_present: false
+  note: 'No X-RateLimit-*, RateLimit-* or Retry-After header was observed on any response. See rate-limits/.'
+caching:
+  edge: 'Cloudflare. REST responses report cf-cache-status: DYNAMIC and x-wp-cf-super-cache-disabled-reason: API Request, so the wp-json surface is explicitly excluded from the page cache.'
+  conditional_requests: 'No ETag or Last-Modified was observed on wp-json responses; conditional GET is not usable.'
+idempotency:
+  coverage: none
+  applicable: false
+  mechanism: null
+  scope: []
+  note: >-
+    NOT APPLICABLE rather than missing. The public AEE surface exposes no mutating operation — every
+    documented operation is a GET, and every write method on the same routes is refused anonymously with
+    HTTP 401. There is no request an agent can replay, so replay protection has nothing to protect. No
+    Idempotency pointer is emitted in apis.yml, because emitting one would assert a mechanism that does
+    not exist.
+dry_run_mode:
+  supported: na
+  note: 'No write surface to rehearse.'
+reversibility:
+  applicable: false
+  grade: na
+  write_surfaces: []
+  note: >-
+    NOT APPLICABLE. The 15 documented operations are all reads; a read cannot be taken back and needs no
+    reversal path. The write half of the WordPress routes exists but is administrator-only and behind
+    application-password authentication, so it is not part of the public contract and no reversal
+    operation or window is published for it. No window is asserted here because AEE states none.
+cross_links:
+  errors: errors/aerospaceengineeringequipmentco-problem-types.yml
+  lifecycle: lifecycle/aerospaceengineeringequipmentco-lifecycle.yml
+  authentication: authentication/aerospaceengineeringequipmentco-authentication.yml
+  rate_limits: rate-limits/aerospaceengineeringequipmentco-rate-limits.yml

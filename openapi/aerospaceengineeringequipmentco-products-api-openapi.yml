@@ -1,0 +1,751 @@
+openapi: 3.1.0
+info:
+  title: AEE Products API
+  version: wp/v2
+  description: 'Public, unauthenticated read access to the Aerospace Engineering Equipment (AEE) friction stir welding product
+    catalogue behind a-fsw.com — 18 published machines and tools across 6 product categories, exposed through the WordPress
+    core REST API custom post type `product` and its `product-category` taxonomy. Anonymous access is read-only: the collections
+    answer GET without credentials. Write methods exist on the same routes but require WordPress application-password authentication
+    and are not part of the public surface.'
+  contact:
+    name: Aerospace Engineering Equipment (Suzhou) Co., Ltd.
+    url: https://a-fsw.com/contact-us/
+  x-derived-from: https://a-fsw.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AEE publishes no developer program; this documents the anonymously readable
+    WordPress REST content API behind a-fsw.com. Every path, parameter and schema here was read from the server's own published
+    OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://a-fsw.com/wp-json
+  description: AEE (a-fsw.com) WordPress REST API
+tags:
+- name: Products
+  description: AEE friction stir welding machines, production lines and tooling.
+- name: Product Categories
+  description: The product-category taxonomy grouping AEE equipment (FSW Machine, FSW Tools, Pin Tools, Automatic FSW Production
+    Line).
+paths:
+  /wp/v2/product:
+    get:
+      operationId: listProducts
+      summary: List products
+      description: Retrieve a paginated collection of published AEE friction stir welding products. 18 products were published
+        at capture on 2026-09-10.
+      tags:
+      - Products
+      parameters:
+      - name: after
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts published after a given ISO8601 compliant date.
+      - name: before
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts published before a given ISO8601 compliant date.
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Ensure result set excludes specific IDs.
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Limit result set to specific IDs.
+      - name: modified_after
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+      - name: modified_before
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Offset the result set by a specific number of items.
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+        description: Order sort attribute ascending or descending.
+      - name: orderby
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+        description: Sort collection by post attribute.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Current page of the collection.
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: Maximum number of items to be returned in result set.
+      - name: product-category
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the product-category taxonomy.
+      - name: product-category_exclude
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the product-category taxonomy.
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: search_columns
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+            type: string
+          default: []
+        description: Array of column names to be searched.
+      - name: search_semantics
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - exact
+        description: How to interpret the search input.
+      - name: slug
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Limit result set to posts with one or more specific slugs.
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            enum:
+            - publish
+            - future
+            - draft
+            - pending
+            - private
+            - trash
+            - auto-draft
+            - inherit
+            - request-pending
+            - request-confirmed
+            - request-failed
+            - request-completed
+            - email_sent
+            - email_failed
+            - email_scheduled
+            - any
+            type: string
+          default: publish
+        description: Limit result set to posts assigned one or more statuses.
+      - name: tax_relation
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+        description: Limit result set based on relationship between multiple taxonomies.
+      responses:
+        '200':
+          description: A page of published AEE products.
+          headers:
+            X-WP-Total: &id001
+              description: Total number of matching items across all pages.
+              schema:
+                type: integer
+            X-WP-TotalPages: &id002
+              description: Total number of pages available at the current per_page size.
+              schema:
+                type: integer
+            Link: &id003
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/product/{id}:
+    get:
+      operationId: getProduct
+      summary: Get a product
+      description: Retrieve a single published AEE product by its numeric identifier.
+      tags:
+      - Products
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the post.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: excerpt_length
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Override the default excerpt length.
+      - name: password
+        in: query
+        required: false
+        schema:
+          type: string
+        description: The password for the post if it is password protected.
+      responses:
+        '200':
+          description: The requested AEE product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 'Not found. OBSERVED 2026-09-10: the edge (nginx/Cloudflare in front of WordPress) intercepts item-level
+            misses and returns an HTML 404 page with content-type text/html, NOT the WordPress JSON error envelope. An API
+            consumer must therefore branch on content-type, not assume JSON.'
+          content:
+            text/html:
+              schema:
+                type: string
+                description: nginx HTML 404 page. The WordPress rest_post_invalid_id JSON envelope is not reached.
+  /wp/v2/product-category:
+    get:
+      operationId: listProductCategories
+      summary: List product categories
+      description: Retrieve the product-category taxonomy terms used to group AEE equipment. 6 terms were published at capture
+        on 2026-09-10.
+      tags:
+      - Product Categories
+      parameters:
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Ensure result set excludes specific IDs.
+      - name: hide_empty
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+        description: Whether to hide terms not assigned to any posts.
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Limit result set to specific IDs.
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+        description: Order sort attribute ascending or descending.
+      - name: orderby
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+          default: name
+        description: Sort collection by term attribute.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Current page of the collection.
+      - name: parent
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Limit result set to terms assigned to a specific parent.
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: Maximum number of items to be returned in result set.
+      - name: post
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: null
+        description: Limit result set to terms assigned to a specific post.
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: slug
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        description: Limit result set to terms with one or more specific slugs.
+      responses:
+        '200':
+          description: A page of product-category terms.
+          headers:
+            X-WP-Total: *id001
+            X-WP-TotalPages: *id002
+            Link: *id003
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductCategory'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/product-category/{id}:
+    get:
+      operationId: getProductCategory
+      summary: Get a product category
+      description: Retrieve a single product-category term by its numeric identifier.
+      tags:
+      - Product Categories
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the term.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      responses:
+        '200':
+          description: The requested product-category term.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductCategory'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 'Not found. OBSERVED 2026-09-10: the edge (nginx/Cloudflare in front of WordPress) intercepts item-level
+            misses and returns an HTML 404 page with content-type text/html, NOT the WordPress JSON error envelope. An API
+            consumer must therefore branch on content-type, not assume JSON.'
+          content:
+            text/html:
+              schema:
+                type: string
+                description: nginx HTML 404 page. The WordPress rest_post_invalid_id JSON envelope is not reached.
+components:
+  schemas:
+    Error:
+      type: object
+      description: WordPress REST API error envelope. Not RFC 9457 problem+json; served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+      required:
+      - code
+      - message
+    Product:
+      type: object
+      title: product
+      description: A single AEE product entry — an FSW machine, production line or tool.
+      properties:
+        date:
+          description: The date the post was published, in the site's timezone.
+          type: string
+          format: date-time
+        date_gmt:
+          description: The date the post was published, as GMT.
+          type: string
+          format: date-time
+        guid:
+          description: The globally unique identifier for the post.
+          type: object
+          properties:
+            raw:
+              description: GUID for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: GUID for the post, transformed for display.
+              type: string
+        id:
+          description: Unique identifier for the post.
+          type: integer
+        link:
+          description: URL to the post.
+          type: string
+          format: uri
+        modified:
+          description: The date the post was last modified, in the site's timezone.
+          type: string
+          format: date-time
+        modified_gmt:
+          description: The date the post was last modified, as GMT.
+          type: string
+          format: date-time
+        slug:
+          description: An alphanumeric identifier for the post unique to its type.
+          type: string
+        status:
+          description: A named status for the post.
+          type: string
+          enum:
+          - publish
+          - future
+          - draft
+          - pending
+          - private
+        type:
+          description: Type of post.
+          type: string
+        class_list:
+          description: An array of the class names for the post container element.
+          type: array
+          items:
+            type: string
+        title:
+          description: The title for the post.
+          type: object
+          properties:
+            raw:
+              description: Title for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML title for the post, transformed for display.
+              type: string
+        content:
+          description: The content for the post.
+          type: object
+          properties:
+            raw:
+              description: Content for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML content for the post, transformed for display.
+              type: string
+            block_version:
+              description: Version of the content block format used by the post.
+              type: integer
+            protected:
+              description: Whether the content is protected with a password.
+              type: boolean
+        excerpt:
+          description: The excerpt for the post.
+          type: object
+          properties:
+            raw:
+              description: Excerpt for the post, as it exists in the database.
+              type: string
+            rendered:
+              description: HTML excerpt for the post, transformed for display.
+              type: string
+            protected:
+              description: Whether the excerpt is protected with a password.
+              type: boolean
+        featured_media:
+          description: The ID of the featured media for the post.
+          type: integer
+        comment_status:
+          description: Whether or not comments are open on the post.
+          type: string
+          enum:
+          - open
+          - closed
+        ping_status:
+          description: Whether or not the post can be pinged.
+          type: string
+          enum:
+          - open
+          - closed
+        meta:
+          description: Meta fields.
+          type: object
+        template:
+          description: The theme file to use to display the post.
+          type: string
+        product-category:
+          description: The terms assigned to the post in the product-category taxonomy.
+          type: array
+          items:
+            type: integer
+    ProductCategory:
+      type: object
+      title: product-category
+      description: A term in the product-category taxonomy.
+      properties:
+        id:
+          description: Unique identifier for the term.
+          type: integer
+        count:
+          description: Number of published posts for the term.
+          type: integer
+        description:
+          description: HTML description of the term.
+          type: string
+        link:
+          description: URL of the term.
+          type: string
+          format: uri
+        name:
+          description: HTML title for the term.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the term unique to its type.
+          type: string
+        taxonomy:
+          description: Type attribution for the term.
+          type: string
+          enum:
+          - product-category
+        parent:
+          description: The parent term ID.
+          type: integer
+        meta:
+          description: Meta fields.
+          type: object

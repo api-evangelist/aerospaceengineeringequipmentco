@@ -1,0 +1,51 @@
+generated: '2026-09-10'
+method: probed
+source: >-
+  Live inspection of https://a-fsw.com/ and https://a-fsw.com/wp-json/ on 2026-09-10, plus a search of the
+  AEE site for versioning, deprecation, SLA and status surfaces.
+summary: >-
+  AEE operates no API lifecycle. It publishes no versioning policy, no deprecation policy, no Sunset or
+  Deprecation headers, no SLA and no status page, because it does not present the surface profiled here as
+  a product. The only versioning in play is WordPress core's own wp/v2 namespace, which AEE does not
+  control and has never announced.
+versioning:
+  policy_published: false
+  scheme: 'path namespace inherited from WordPress core (wp/v2)'
+  current_version: wp/v2
+  breaking_change_notice: none
+  note: 'A WordPress core major upgrade could move or reshape these routes with no notice from AEE.'
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No operation in openapi/ is marked deprecated, and no Sunset or Deprecation response header was
+    observed on any probed route. No Deprecation pointer is emitted in apis.yml.
+sla:
+  published: false
+  uptime_target: null
+support:
+  channel: 'Web contact form and enquiry page'
+  url: https://a-fsw.com/contact-us/
+  status: 200
+  note: 'General sales/engineering enquiry, not developer support. The form posts to the FluentForms plugin endpoint.'
+status_page:
+  published: false
+  probed:
+  - {url: 'https://status.a-fsw.com/', result: NXDOMAIN}
+  - {url: 'https://a-fsw.com/status/', status: 200, note: 'Soft-404 — returns the site homepage. Not a status page.'}
+  note: >-
+    No status page exists. No StatusPage pointer is emitted in apis.yml, because a pointer would assert a
+    surface AEE does not serve.
+changelog:
+  published: false
+  note: >-
+    AEE publishes no API or product changelog. The News category (4 posts) and Blog category (46 posts)
+    carry company and technical articles, not dated release notes, so no ChangeLog artifact is emitted.
+  nearest_surface: {url: 'https://a-fsw.com/category/news/', status: 200, kind: company-news}
+content_freshness:
+  most_recent_post: {date: '2026-09-10', id: 602, note: 'The blog is actively maintained; the newest post landed the day of this probe.'}
+  most_recent_product_change: {date: '2026-09-02', id: 409, slug: stationary-shoulder-fsw-tool}
+  note: 'The site is live and edited regularly, so the read surface reflects a maintained catalogue rather than an abandoned one.'

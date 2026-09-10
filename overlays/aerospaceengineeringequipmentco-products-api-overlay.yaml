@@ -1,0 +1,42 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for AEE Products API
+  version: 1.0.0
+  description: Overlay 1.0.0 capturing the API Evangelist enhancements applied on top of the derived OpenAPI for the AEE friction
+    stir welding product catalogue. The base document is itself a derivation from the server's own OPTIONS documents; this
+    overlay adds provenance, agentic-access classification and the runtime caveats observed live on 2026-09-10. It never mutates
+    the base contract.
+extends: aerospaceengineeringequipmentco-products-api-openapi.yml
+x-generated: '2026-09-10'
+x-method: generated
+x-source: openapi/aerospaceengineeringequipmentco-products-api-openapi.yml
+actions:
+- target: $.info
+  description: Record that this document is a third-party derivation, not a vendor-published contract.
+  update:
+    x-api-evangelist-profile: https://apis.io/provider/aerospaceengineeringequipmentco
+    x-provenance: Derived by API Evangelist from the a-fsw.com WordPress route index and per-route OPTIONS schema documents
+      on 2026-09-10. AEE publishes no OpenAPI.
+    x-support-channel: https://a-fsw.com/contact-us/
+- target: $.paths.*.get
+  description: Mark every documented operation as anonymously callable and safe, so an agent can plan without a credential
+    step.
+  update:
+    x-agentic-access:
+      action-class: read
+      consequence: none
+      auth: none
+      reversible: na
+      escalation: none
+- target: $.servers[0]
+  description: Note the edge in front of the origin, which is where the non-JSON 404 behaviour comes from.
+  update:
+    x-edge: 'Cloudflare in front of nginx/WordPress. REST responses report cf-cache-status: DYNAMIC and carry a cf-ray; the
+      wp-json surface is excluded from the page cache.'
+- target: $.paths.*.get.responses.404
+  description: Flag the observed content-type divergence on item-level misses so a generated client does not blindly JSON-parse
+    it.
+  update:
+    x-observed-content-type: text/html
+    x-observed-on: '2026-09-10'
+    x-consumer-note: Branch on content-type before parsing. The WordPress JSON error envelope is not reached on this path.

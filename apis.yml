@@ -42,12 +42,17 @@ maintainers:
 apis:
 - aid: aerospaceengineeringequipmentco:aee-products-api
   name: AEE Products API
-  description: Public, unauthenticated read access to the AEE friction stir welding product catalogue
-    — 18 published machines, production lines and tools across 6 product categories — via the WordPress
-    core REST API custom post type `product` and its `product-category` taxonomy. Verified live on 2026-09-10.
+  description: >-
+    Public, unauthenticated read access to the AEE friction stir welding product catalogue — 18 published
+    machines, production lines and tools across 6 product categories — via the WordPress core REST API
+    custom post type `product` and its `product-category` taxonomy. Verified live on 2026-09-10.
   humanURL: https://a-fsw.com/wp-json/
   baseURL: https://a-fsw.com/wp-json
   tags:
+  - Product
+  - Friction Stir Welding
+  - Industrial Equipment
+  tags_raw:
   - Products
   - Friction Stir Welding
   - Industrial Equipment
@@ -57,41 +62,83 @@ apis:
   - type: Overlay
     url: overlays/aerospaceengineeringequipmentco-products-api-overlay.yaml
   image: https://a-fsw.com/wp-content/uploads/2026/05/cropped-ioc.png
-- aid: aerospaceengineeringequipmentco:aee-content-api
-  name: AEE Content API
-  description: Public, unauthenticated read access to the AEE news and technical blog archive (50 posts)
-    and the 14 static marketing, process, industry and policy pages behind a-fsw.com, via the WordPress
-    core REST API. Verified live on 2026-09-10.
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-categories-api
+  name: Aerospace Engineering Equipment Categories API
+  description: The core category taxonomy separating News from Blog.
+  humanURL: https://a-fsw.com/wp-json/
+  baseURL: https://a-fsw.com/wp-json
+  tags:
+  - Categories
+  properties:
+  - type: OpenAPI
+    url: openapi/aerospaceengineeringequipmentco-categories-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-media-api
+  name: Aerospace Engineering Equipment Media API
+  description: The AEE media library — product photography, equipment diagrams and application imagery.
+  humanURL: https://a-fsw.com/wp-json/
+  baseURL: https://a-fsw.com/wp-json
+  tags:
+  - Media
+  properties:
+  - type: OpenAPI
+    url: openapi/aerospaceengineeringequipmentco-media-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-pages-api
+  name: Aerospace Engineering Equipment Pages API
+  description: AEE static marketing, process, industry and policy pages.
+  humanURL: https://a-fsw.com/wp-json/
+  baseURL: https://a-fsw.com/wp-json
+  tags:
+  - Pages
+  properties:
+  - type: OpenAPI
+    url: openapi/aerospaceengineeringequipmentco-pages-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-posts-api
+  name: Aerospace Engineering Equipment Posts API
+  description: AEE news announcements and friction stir welding technical articles.
   humanURL: https://a-fsw.com/wp-json/
   baseURL: https://a-fsw.com/wp-json
   tags:
   - Posts
-  - Pages
-  - Content
   properties:
   - type: OpenAPI
-    url: openapi/aerospaceengineeringequipmentco-content-api-openapi.yml
-  - type: Overlay
-    url: overlays/aerospaceengineeringequipmentco-content-api-overlay.yaml
-  image: https://a-fsw.com/wp-content/uploads/2026/05/cropped-ioc.png
-- aid: aerospaceengineeringequipmentco:aee-site-api
-  name: AEE Site Index API
-  description: Public, unauthenticated read access to the site-wide index surfaces behind a-fsw.com —
-    cross-content search, the 232-item media library of equipment photography and diagrams, and the content-type
-    and post-status registries — via the WordPress core REST API. Verified live on 2026-09-10.
+    url: openapi/aerospaceengineeringequipmentco-posts-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-product-categories-api
+  name: Aerospace Engineering Equipment Product Categories API
+  description: >-
+    The product-category taxonomy grouping AEE equipment (FSW Machine, FSW Tools, Pin Tools, Automatic
+    FSW Production Line).
+  humanURL: https://a-fsw.com/wp-json/
+  baseURL: https://a-fsw.com/wp-json
+  tags:
+  - Product Categories
+  properties:
+  - type: OpenAPI
+    url: openapi/aerospaceengineeringequipmentco-product-categories-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-registries-api
+  name: Aerospace Engineering Equipment Registries API
+  description: Content-type and post-status registries describing the shape of the AEE content surface.
+  humanURL: https://a-fsw.com/wp-json/
+  baseURL: https://a-fsw.com/wp-json
+  tags:
+  - Registries
+  properties:
+  - type: OpenAPI
+    url: openapi/aerospaceengineeringequipmentco-registries-api-openapi.yml
+- aid: aerospaceengineeringequipmentco:aerospaceengineeringequipmentco-search-api
+  name: Aerospace Engineering Equipment Search API
+  description: Cross-content search across AEE posts, pages and products.
   humanURL: https://a-fsw.com/wp-json/
   baseURL: https://a-fsw.com/wp-json
   tags:
   - Search
-  - Media
-  - Content
   properties:
   - type: OpenAPI
-    url: openapi/aerospaceengineeringequipmentco-site-api-openapi.yml
-  - type: Overlay
-    url: overlays/aerospaceengineeringequipmentco-site-api-overlay.yaml
-  image: https://a-fsw.com/wp-content/uploads/2026/05/cropped-ioc.png
+    url: openapi/aerospaceengineeringequipmentco-search-api-openapi.yml
 common:
+- type: Overlay
+  url: overlays/aerospaceengineeringequipmentco-content-api-overlay.yaml
+- type: Overlay
+  url: overlays/aerospaceengineeringequipmentco-site-api-overlay.yaml
 - type: DomainSecurity
   url: security/aerospaceengineeringequipmentco-domain-security.yml
 - type: Website

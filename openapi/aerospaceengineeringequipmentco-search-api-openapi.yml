@@ -1,0 +1,195 @@
+openapi: 3.2.0
+info:
+  title: AEE Site Index Search API
+  version: wp/v2
+  description: Public, unauthenticated read access to the site-wide index surfaces behind a-fsw.com — cross-content search over every published post, page and product (77 results for the term "welding" at capture), the media library of 232 product photographs, equipment diagrams and application images, and the content-type and post-status registries that describe how the rest of the surface is organised.
+  contact:
+    name: Aerospace Engineering Equipment (Suzhou) Co., Ltd.
+    url: https://a-fsw.com/contact-us/
+  x-derived-from: https://a-fsw.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AEE publishes no developer program; this documents the anonymously readable WordPress REST content API behind a-fsw.com. Every path, parameter and schema here was read from the server's own published OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://a-fsw.com/wp-json
+  description: AEE (a-fsw.com) WordPress REST API
+tags:
+- name: Search
+  description: Cross-content search across AEE posts, pages and products.
+paths:
+  /wp/v2/search:
+    get:
+      operationId: search
+      summary: Search site content
+      description: Search across published AEE posts, pages and products and return lightweight hit records (id, title, url, type, subtype). 77 results were returned for the term "welding" at capture on 2026-09-10.
+      tags:
+      - Search
+      parameters:
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      - name: exclude
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Ensure result set excludes specific IDs.
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Limit result set to specific IDs.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Current page of the collection.
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: Maximum number of items to be returned in result set.
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Limit results to those matching a string.
+      - name: subtype
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            enum:
+            - post
+            - page
+            - product
+            - category
+            - post_tag
+            - product-category
+            - any
+            type: string
+          default: any
+        description: Limit results to items of one or more object subtypes.
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+          default: post
+        description: Limit results to items of an object type.
+      responses:
+        '200':
+          description: A page of search hits.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items across all pages.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page size.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    SearchResult:
+      type: object
+      title: search-result
+      description: A single cross-content search hit.
+      properties:
+        id:
+          description: Unique identifier for the object.
+          type:
+          - integer
+          - string
+        title:
+          description: The title for the object.
+          type: string
+        url:
+          description: URL to the object.
+          type: string
+          format: uri
+        type:
+          description: Object type.
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+        subtype:
+          description: Object subtype.
+          type: string
+          enum:
+          - post
+          - page
+          - product
+          - category
+          - post_tag
+          - product-category
+    Error:
+      type: object
+      description: WordPress REST API error envelope. Not RFC 9457 problem+json; served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+      required:
+      - code
+      - message

@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: AEE Products API
+  title: AEE Content Posts API
   version: wp/v2
-  description: Public, unauthenticated read access to the Aerospace Engineering Equipment (AEE) friction stir welding product catalogue behind a-fsw.com — 18 published machines and tools across 6 product categories, exposed through the WordPress core REST API custom post type `product` and its `product-category` taxonomy.
+  description: Public, unauthenticated read access to the editorial and marketing content behind a-fsw.com — the AEE news and technical blog archive (50 posts across the News and Blog categories) and the 14 static pages covering the company profile, FSW and FSSW process explainers, the industry pages (aerospace, railway, automotive, marine, shipbuilding, power electronics), service, FAQ, contact and privacy policy.
   contact:
     name: Aerospace Engineering Equipment (Suzhou) Co., Ltd.
     url: https://a-fsw.com/contact-us/
@@ -13,16 +13,16 @@ servers:
 - url: https://a-fsw.com/wp-json
   description: AEE (a-fsw.com) WordPress REST API
 tags:
-- name: Products
-  description: AEE friction stir welding machines, production lines and tooling.
+- name: Posts
+  description: AEE news announcements and friction stir welding technical articles.
 paths:
-  /wp/v2/product:
+  /wp/v2/posts:
     get:
-      operationId: listProducts
-      summary: List products
-      description: Retrieve a paginated collection of published AEE friction stir welding products. 18 products were published at capture on 2026-09-10.
+      operationId: listPosts
+      summary: List posts
+      description: Retrieve a paginated collection of published AEE posts. 50 posts were published at capture on 2026-09-10 — 46 in Blog and 4 in News.
       tags:
-      - Products
+      - Posts
       parameters:
       - name: after
         in: query
@@ -31,6 +31,24 @@ paths:
           type: string
           format: date-time
         description: Limit response to posts published after a given ISO8601 compliant date.
+      - name: author
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Limit result set to posts assigned to specific authors.
+      - name: author_exclude
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+          default: []
+        description: Ensure result set excludes posts assigned to specific authors.
       - name: before
         in: query
         required: false
@@ -38,6 +56,71 @@ paths:
           type: string
           format: date-time
         description: Limit response to posts published before a given ISO8601 compliant date.
+      - name: categories
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the categories taxonomy.
+      - name: categories_exclude
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              include_children:
+                description: Whether to include child terms in the terms limiting the result set.
+                type: boolean
+                default: false
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the categories taxonomy.
       - name: context
         in: query
         required: false
@@ -58,6 +141,33 @@ paths:
             type: integer
           default: []
         description: Ensure result set excludes specific IDs.
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: array
+          uniqueItems: true
+          items:
+            enum:
+            - standard
+            - aside
+            - chat
+            - gallery
+            - link
+            - image
+            - quote
+            - status
+            - video
+            - audio
+            type: string
+        description: Limit result set to items assigned one or more given formats.
+      - name: ignore_sticky
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+        description: Whether to ignore sticky posts or not.
       - name: include
         in: query
         required: false
@@ -132,71 +242,6 @@ paths:
           maximum: 100
           default: 10
         description: Maximum number of items to be returned in result set.
-      - name: product-category
-        in: query
-        required: false
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-              operator:
-                description: Whether items must be assigned all or any of the specified terms.
-                type: string
-                enum:
-                - AND
-                - OR
-                default: OR
-            additionalProperties: false
-        description: Limit result set to items with specific terms assigned in the product-category taxonomy.
-      - name: product-category_exclude
-        in: query
-        required: false
-        schema:
-          type:
-          - object
-          - array
-          oneOf:
-          - title: Term ID List
-            description: Match terms with the listed IDs.
-            type: array
-            items:
-              type: integer
-          - title: Term ID Taxonomy Query
-            description: Perform an advanced term query.
-            type: object
-            properties:
-              terms:
-                description: Term IDs.
-                type: array
-                items:
-                  type: integer
-                default: []
-              include_children:
-                description: Whether to include child terms in the terms limiting the result set.
-                type: boolean
-                default: false
-            additionalProperties: false
-        description: Limit result set to items except those with specific terms assigned in the product-category taxonomy.
       - name: search
         in: query
         required: false
@@ -258,6 +303,69 @@ paths:
             type: string
           default: publish
         description: Limit result set to posts assigned one or more statuses.
+      - name: sticky
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Limit result set to items that are sticky.
+      - name: tags
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+              operator:
+                description: Whether items must be assigned all or any of the specified terms.
+                type: string
+                enum:
+                - AND
+                - OR
+                default: OR
+            additionalProperties: false
+        description: Limit result set to items with specific terms assigned in the tags taxonomy.
+      - name: tags_exclude
+        in: query
+        required: false
+        schema:
+          type:
+          - object
+          - array
+          oneOf:
+          - title: Term ID List
+            description: Match terms with the listed IDs.
+            type: array
+            items:
+              type: integer
+          - title: Term ID Taxonomy Query
+            description: Perform an advanced term query.
+            type: object
+            properties:
+              terms:
+                description: Term IDs.
+                type: array
+                items:
+                  type: integer
+                default: []
+            additionalProperties: false
+        description: Limit result set to items except those with specific terms assigned in the tags taxonomy.
       - name: tax_relation
         in: query
         required: false
@@ -269,7 +377,7 @@ paths:
         description: Limit result set based on relationship between multiple taxonomies.
       responses:
         '200':
-          description: A page of published AEE products.
+          description: A page of published AEE posts.
           headers:
             X-WP-Total:
               description: Total number of matching items across all pages.
@@ -288,7 +396,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Product'
+                  $ref: '#/components/schemas/Post'
         '400':
           description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
           content:
@@ -301,13 +409,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /wp/v2/product/{id}:
+  /wp/v2/posts/{id}:
     get:
-      operationId: getProduct
-      summary: Get a product
-      description: Retrieve a single published AEE product by its numeric identifier.
+      operationId: getPost
+      summary: Get a post
+      description: Retrieve a single published AEE post by its numeric identifier.
       tags:
-      - Products
+      - Posts
       parameters:
       - name: id
         in: path
@@ -340,11 +448,11 @@ paths:
         description: The password for the post if it is password protected.
       responses:
         '200':
-          description: The requested AEE product.
+          description: The requested AEE post.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/Post'
         '400':
           description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
           content:
@@ -366,10 +474,30 @@ paths:
                 description: nginx HTML 404 page. The WordPress rest_post_invalid_id JSON envelope is not reached.
 components:
   schemas:
-    Product:
+    Error:
       type: object
-      title: product
-      description: A single AEE product entry — an FSW machine, production line or tool.
+      description: WordPress REST API error envelope. Not RFC 9457 problem+json; served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+      required:
+      - code
+      - message
+    Post:
+      type: object
+      title: post
+      description: A single AEE news item or technical blog article.
       properties:
         date:
           description: The date the post was published, in the site's timezone.
@@ -450,6 +578,9 @@ components:
             protected:
               description: Whether the content is protected with a password.
               type: boolean
+        author:
+          description: The ID for the author of the post.
+          type: integer
         excerpt:
           description: The excerpt for the post.
           type: object
@@ -478,34 +609,42 @@ components:
           enum:
           - open
           - closed
+        format:
+          description: The format for the post.
+          type: string
+          enum:
+          - standard
+          - aside
+          - chat
+          - gallery
+          - link
+          - image
+          - quote
+          - status
+          - video
+          - audio
         meta:
           description: Meta fields.
           type: object
+          properties:
+            footnotes:
+              type: string
+              title: ''
+              description: ''
+              default: ''
+        sticky:
+          description: Whether or not the post should be treated as sticky.
+          type: boolean
         template:
           description: The theme file to use to display the post.
           type: string
-        product-category:
-          description: The terms assigned to the post in the product-category taxonomy.
+        categories:
+          description: The terms assigned to the post in the category taxonomy.
           type: array
           items:
             type: integer
-    Error:
-      type: object
-      description: WordPress REST API error envelope. Not RFC 9457 problem+json; served as application/json.
-      properties:
-        code:
-          type: string
-          description: Machine-readable error slug, e.g. rest_post_invalid_id.
-        message:
-          type: string
-          description: Human-readable error message.
-        data:
-          type: object
-          description: Error detail.
-          properties:
-            status:
-              type: integer
-              description: HTTP status code.
-      required:
-      - code
-      - message
+        tags:
+          description: The terms assigned to the post in the post_tag taxonomy.
+          type: array
+          items:
+            type: integer

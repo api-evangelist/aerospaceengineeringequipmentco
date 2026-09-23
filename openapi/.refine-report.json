@@ -1,0 +1,39 @@
+{
+  "provider": "aerospaceengineeringequipmentco",
+  "sources": [
+    "_original/aerospaceengineeringequipmentco-content-api-openapi.yml",
+    "_original/aerospaceengineeringequipmentco-site-api-openapi.yml",
+    "aerospaceengineeringequipmentco-product-categories-api-openapi.yml",
+    "aerospaceengineeringequipmentco-products-api-openapi.yml"
+  ],
+  "outputs": [
+    "aerospaceengineeringequipmentco-categories-api-openapi.yml",
+    "aerospaceengineeringequipmentco-pages-api-openapi.yml",
+    "aerospaceengineeringequipmentco-posts-api-openapi.yml",
+    "aerospaceengineeringequipmentco-media-api-openapi.yml",
+    "aerospaceengineeringequipmentco-registries-api-openapi.yml",
+    "aerospaceengineeringequipmentco-search-api-openapi.yml",
+    "aerospaceengineeringequipmentco-product-categories-api-openapi.yml",
+    "aerospaceengineeringequipmentco-products-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [
+    "aerospaceengineeringequipmentco-product-categories-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/product-category get, /wp/v2/product-category/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "aerospaceengineeringequipmentco-products-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/product get, /wp/v2/product/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth."
+  ],
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "aerospaceengineeringequipmentco-content-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "aerospaceengineeringequipmentco-site-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "aerospaceengineeringequipmentco-categories-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerospaceengineeringequipmentco-media-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerospaceengineeringequipmentco-pages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerospaceengineeringequipmentco-posts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerospaceengineeringequipmentco-registries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "aerospaceengineeringequipmentco-search-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

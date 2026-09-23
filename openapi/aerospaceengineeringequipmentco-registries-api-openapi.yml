@@ -1,0 +1,215 @@
+openapi: 3.2.0
+info:
+  title: AEE Site Index Registries API
+  version: wp/v2
+  description: Public, unauthenticated read access to the site-wide index surfaces behind a-fsw.com — cross-content search over every published post, page and product (77 results for the term "welding" at capture), the media library of 232 product photographs, equipment diagrams and application images, and the content-type and post-status registries that describe how the rest of the surface is organised.
+  contact:
+    name: Aerospace Engineering Equipment (Suzhou) Co., Ltd.
+    url: https://a-fsw.com/contact-us/
+  x-derived-from: https://a-fsw.com/wp-json/ route index + per-route HTTP OPTIONS schema documents
+  x-derived-on: '2026-09-10'
+  x-api-evangelist-note: Third-party profile. AEE publishes no developer program; this documents the anonymously readable WordPress REST content API behind a-fsw.com. Every path, parameter and schema here was read from the server's own published OPTIONS documents on 2026-09-10 — nothing is invented.
+servers:
+- url: https://a-fsw.com/wp-json
+  description: AEE (a-fsw.com) WordPress REST API
+tags:
+- name: Registries
+  description: Content-type and post-status registries describing the shape of the AEE content surface.
+paths:
+  /wp/v2/types:
+    get:
+      operationId: listContentTypes
+      summary: List content types
+      description: Retrieve the registry of content types published on a-fsw.com, including the custom `product` type that carries the FSW equipment catalogue.
+      tags:
+      - Registries
+      parameters:
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      responses:
+        '200':
+          description: A map of registered content types keyed by slug.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items across all pages.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page size.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContentType'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wp/v2/statuses:
+    get:
+      operationId: listPostStatuses
+      summary: List post statuses
+      description: Retrieve the registry of post statuses. Anonymous callers only ever see items in the publicly queryable `publish` status.
+      tags:
+      - Registries
+      parameters:
+      - name: context
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+        description: Scope under which the request is made; determines fields present in response.
+      responses:
+        '200':
+          description: A map of registered post statuses keyed by slug.
+          headers:
+            X-WP-Total:
+              description: Total number of matching items across all pages.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available at the current per_page size.
+              schema:
+                type: integer
+            Link:
+              description: RFC 8288 pagination links (rel="next" / rel="prev").
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostStatus'
+        '400':
+          description: Invalid parameter. WordPress returns `rest_invalid_param` with a per-parameter detail map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authorized for the requested context. Anonymous callers may only use `context=view`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      description: WordPress REST API error envelope. Not RFC 9457 problem+json; served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+      required:
+      - code
+      - message
+    ContentType:
+      type: object
+      title: type
+      description: A registered content type.
+      properties:
+        description:
+          description: A human-readable description of the post type.
+          type: string
+        hierarchical:
+          description: Whether or not the post type should have children.
+          type: boolean
+        name:
+          description: The title for the post type.
+          type: string
+        slug:
+          description: An alphanumeric identifier for the post type.
+          type: string
+        has_archive:
+          description: If the value is a string, the value will be used as the archive slug. If the value is false the post type has no archive.
+          type:
+          - string
+          - boolean
+        taxonomies:
+          description: Taxonomies associated with post type.
+          type: array
+          items:
+            type: string
+        rest_base:
+          description: REST base route for the post type.
+          type: string
+        rest_namespace:
+          description: REST route's namespace for the post type.
+          type: string
+        icon:
+          description: The icon for the post type.
+          type: string
+        template:
+          type: array
+          description: The block template associated with the post type.
+        template_lock:
+          type:
+          - string
+          - boolean
+          enum:
+          - all
+          - insert
+          - contentOnly
+          - false
+          description: The template_lock associated with the post type, or false if none.
+    PostStatus:
+      type: object
+      title: status
+      description: A registered post status.
+      properties:
+        name:
+          description: The title for the status.
+          type: string
+        public:
+          description: Whether posts of this status should be shown in the front end of the site.
+          type: boolean
+        queryable:
+          description: Whether posts with this status should be publicly-queryable.
+          type: boolean
+        slug:
+          description: An alphanumeric identifier for the status.
+          type: string
+        date_floating:
+          description: Whether posts of this status may have floating published dates.
+          type: boolean

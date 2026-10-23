@@ -19,8 +19,15 @@
       "source": "https://a-fsw.com/category/blog/",
       "feed_url": "https://a-fsw.com/category/blog/feed/",
       "title": "",
-      "saved": 8,
+      "saved": 0,
       "method": "discovered"
+    },
+    {
+      "source": "https://a-fsw.com/category/blog/feed/",
+      "feed_url": "https://a-fsw.com/category/blog/feed/",
+      "title": "",
+      "saved": 0,
+      "method": "feed"
     },
     {
       "source": "https://a-fsw.com/contact-us/blog/feed/",
@@ -30,6 +37,6 @@
       "method": "feed"
     }
   ],
-  "post_count": 8,
-  "fetched": "2026-10-10T13:15:00Z"
+  "post_count": 18,
+  "fetched": "2026-10-17T14:53:57Z"
 }

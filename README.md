@@ -90,20 +90,20 @@ Model Context Protocol servers that expose the API to agents.
 
 Authentication, trust centre, and vulnerability disclosure.
 
-- [Aerospaceengineeringequipmentco Authentication](https://apis.io/security/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-authentication/)
-- [Aerospaceengineeringequipmentco Domain Security](https://apis.io/security/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-domain-security/)
+- [Aerospace Engineering Equipment Authentication](https://apis.io/security/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-authentication/)
+- [Aerospace Engineering Equipment Domain Security](https://apis.io/security/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-domain-security/)
 
 #### Plans and pricing (1)
 
 Published plans, tiers and prices.
 
-- [Aerospaceengineeringequipmentco Plans Pricing](https://apis.io/plans/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-plans-pricing/)
+- [Aerospace Engineering Equipment Plans Pricing](https://apis.io/plans/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-plans-pricing/)
 
 #### Rate limits (1)
 
 Published request limits.
 
-- [Aerospaceengineeringequipmentco Rate Limits](https://apis.io/rate-limits/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-rate-limits/)
+- [Aerospace Engineering Equipment Rate Limits](https://apis.io/rate-limits/aerospaceengineeringequipmentco/aerospaceengineeringequipmentco-rate-limits/)
 
 ## Where to find this API
 
@@ -116,7 +116,7 @@ Links to the company's own pages. This repository publishes no copy of their spe
 
 ## API Evangelist rating
 
-**Kin Score 16.9** — emerging · rubric 0.24.0 · scored 2026-10-17
+**Kin Score 16.5** — emerging · rubric 0.28.1 · scored 2026-11-21
 
 | Facet | Score |
 |---|---|
@@ -125,9 +125,9 @@ Links to the company's own pages. This repository publishes no copy of their spe
 | Contract governance | 18.2 |
 | Operational transparency | 0.0 |
 | Developer ergonomics | 30.4 |
-| Access clarity | 10.5 |
+| Access clarity | 12.8 |
 
-**Agent readiness 8.8** — agent-aware
+**Agent readiness 8.6** — agent-aware
 
 | Agent-readiness dimension | Result |
 |---|---|
@@ -150,8 +150,14 @@ Links to the company's own pages. This repository publishes no copy of their spe
 | Protected Resource Metadata | — |
 | Dynamic Client Registration | — |
 | Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+| MCP Tool Quality | na |
+| Onboarding Descriptor | — |
+| Dns Aid Index | na |
+| Markdown Negotiation | na |
 
-**Regulatory alignment 20.6** — Horizontal (data, software, accessibility, platform)
+**Regulatory alignment 14.7** — Horizontal (data, software, accessibility, platform)
 
 The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/aerospaceengineeringequipmentco/](https://apis.io/providers/aerospaceengineeringequipmentco/).
 
